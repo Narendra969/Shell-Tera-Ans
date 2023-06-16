@@ -1,29 +1,29 @@
 ---
 # Import Play books
 - name: set-hostnames
-  import: set_hostnames.yaml
+  import_playbook: set_hostnames.yaml
 
 - name: disable-swap
-  import: disable_swap_unzip.yaml
+  import_playbook: disable_swap_unzip.yaml
 
 - name: container run time related packages
-  import: containerd_runc_cni_crictl.yaml
+  import_playbook: containerd_runc_cni_crictl.yaml
 
 - name: configure and load kernal modules
-  import: configure_load_kernal_modules.yaml
+  import_playbook: configure_load_kernal_modules.yaml
 
 - name: update and install dependent packages
-  import: install_dependencies.yaml
+  import_playbook: install_dependencies.yaml
 
 - name: install and configure kubernetes related packages in master node
-  import: install_configure_kubernetes_packages_master.yaml
+  import_playbook: install_configure_kubernetes_packages_master.yaml
 
 - name: install and configure kubernetes related packages in worker nodes
-  import: install_configure_kubernetes_packages_workers.yaml
+  import_playbook: install_configure_kubernetes_packages_workers.yaml
 
 - name: execute join command and join nodes to the cluster
-  import: get_token_join_worker.yaml
+  import_playbook: get_token_join_worker.yaml
 
 - name: configure kubectl client and get kube config file from master node to the client
-  import: configure_kubectl_client.yaml
+  import_playbook: configure_kubectl_client.yaml
 ...
