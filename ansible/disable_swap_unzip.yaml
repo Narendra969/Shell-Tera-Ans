@@ -1,0 +1,27 @@
+---
+- hosts: K8S_Servers
+  become: true
+  tasks:
+    - name: Disable swap and comment out swap entry in /etc/fstab
+      shell: |
+        set -e
+        {
+          swapoff -a
+          sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+        } | tee -a /home/ubuntu/swap.txt
+      args: 
+        chdir: /home/ubuntu
+        creates: swap.txt
+
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop:
+        - unzip
+        - bzip2
+        - xz-utils
+        - tar
+        - wget
+...

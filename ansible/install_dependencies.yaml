@@ -1,0 +1,24 @@
+---
+- hosts: K8S_Servers
+  become: true
+  tasks:
+    - name: Update apt cache and install dependencies
+      apt:
+        name: 
+          - apt-transport-https
+          - curl
+          - ca-certificates
+        state: present
+        update_cache: yes
+
+    - name: Add Kubernetes apt repository key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        filename: kubernetes
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+...

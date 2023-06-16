@@ -1,0 +1,28 @@
+---
+- hosts: K8S_Master
+  become: true
+  tasks:
+    - name: Set Host Name for Master
+      shell: hostnamectl set-hostname K8S-Master >> /home/ubuntu/sethostname.txt
+      args: 
+        chdir: /home/ubuntu
+        creates: sethostname.txt  
+
+- hosts: K8S_Worker_1
+  become: true
+  tasks:
+    - name: Set Host Name for Worker1
+      shell: hostnamectl set-hostname K8S-Worker-1 >> /home/ubuntu/sethostname.txt
+      args: 
+        chdir: /home/ubuntu
+        creates: sethostname.txt  
+
+- hosts: K8S_Worker_2
+  become: true
+  tasks:
+    - name: Set Host Name for Worker2
+      shell: hostnamectl set-hostname K8S-Worker-2 >> /home/ubuntu/sethostname.txt
+      args: 
+        chdir: /home/ubuntu
+        creates: sethostname.txt  
+...

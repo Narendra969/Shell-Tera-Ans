@@ -1,0 +1,62 @@
+---
+- hosts: Master
+  become: true
+  tasks:
+    - name: Install rsync package
+      package:
+        name: rsync
+        state: present
+
+    - name: Copy .kube directory from master to ansible controller
+      synchronize: 
+        src: "/home/ubuntu/.kube"
+        dest: "/tmp"
+        mode: pull
+
+- hosts: Kubectl_Client
+  become: true
+  tasks:
+    - name: Update apt cache and install dependencies
+      apt:
+        name: 
+          - apt-transport-https
+          - curl
+          - ca-certificates
+        state: present
+        update_cache: yes
+
+    - name: Add Kubernetes apt repository key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        filename: kubernetes
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+
+    - name: Install kubectl package
+      apt:
+        name: kubectl
+        state: present
+        update_cache: yes
+
+    - name: Copy .kube directory to Kubectl_Client machine
+      synchronize: 
+        src: /tmp/.kube
+        dest: /home/ubuntu
+        mode: push
+
+    - name: Set permissions on .kube directory
+      file:
+        path: /home/ubuntu/.kube
+        mode: '0700'
+
+    - name: Delete .kube directory in control node
+      file:
+        path: "/tmp/.kube"
+        state: absent
+      delegate_to: localhost
+      ignore_errors: yes
+...

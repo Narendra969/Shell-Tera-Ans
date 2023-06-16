@@ -1,0 +1,134 @@
+---
+- hosts: K8S_Servers
+  become: true
+  vars_files:
+    - url_vars.yml
+  tasks:
+    - name: Download containerd tarball
+      shell: |
+        wget -q -P /home/ubuntu "{{CONTAINERD_PACKAGE_URL}}" >> /home/ubuntu/containerd-tar.txt
+      args:
+        chdir: /home/ubuntu
+        creates: containerd-tar.txt
+      register: download_containerd
+
+    - name: Extract containerd tarball
+      shell: tar Cxzvf /usr/local /home/ubuntu/{{CONTAINERD_PACKAGE_TAR_GZ}}
+      when: download_containerd.changed
+
+    - name: Remove containerd tarball
+      file:
+        path: /home/ubuntu/{{CONTAINERD_PACKAGE_TAR_GZ}}
+        state: absent
+      when: download_containerd.changed
+
+    - name: Create directory for containerd service file
+      file:
+        path: /usr/local/lib/systemd/system
+        state: directory
+
+    - name: Check if containerd service file exists
+      stat: 
+        path: /usr/local/lib/systemd/system/containerd.service
+      register: containerd_service_file
+
+    - name: Download containerd service file
+      get_url: 
+        url: "{{CONTAINERD_SERVICE_FILE_URL}}"
+        dest: /usr/local/lib/systemd/system
+      when: containerd_service_file.stat.exists != true
+      notify: 
+        -  Reload systemd daemon
+        -  Enable and start containerd service
+
+    - name: Checking runc binary installed or not in /usr/local/sbin/
+      stat: 
+        path: /usr/local/sbin/runc
+      register: runc_installed
+
+    - name: Download runc binary
+      get_url: 
+        url: "{{RUNC_BINARY_URL}}"
+        dest: /home/ubuntu/
+      when: runc_installed.stat.exists != true
+
+    - name: Install runc binary
+      shell: install -m 755 /home/ubuntu/runc.amd64 /usr/local/sbin/runc
+      when: runc_installed.stat.exists != true
+      register: install_runc_result
+
+    - name: Remove runc binary
+      file:
+        path: /home/ubuntu/runc.amd64
+        state: absent
+      when: install_runc_result.changed
+
+    - name: Create directory for CNI plugins
+      file:
+        path: /opt/cni/bin
+        state: directory
+
+    - name: Download CNI plugins tarball
+      shell: |
+        wget -q -P /home/ubuntu "{{CNI_PLUGIN_URL}}" >> /home/ubuntu/cni-plugin-tar.txt
+      args:
+        chdir: /home/ubuntu
+        creates: cni-plugin-tar.txt
+      register: download_cni_plugin
+
+    - name: Extract CNI plugins tarball
+      shell: tar Cxzvf /opt/cni/bin /home/ubuntu/{{CNI_PLUGIN_TAR_GZ}}
+      when: download_cni_plugin.changed
+
+    - name: Remove CNI plugins tarball
+      file:
+        path: /home/ubuntu/{{CNI_PLUGIN_TAR_GZ}}
+        state: absent
+      when: download_cni_plugin.changed
+
+    - name: Checking crictl binary installed or not in /usr/local/bin
+      stat: 
+        path: /usr/local/bin/crictl
+      register: crictl_installed
+      
+    - name: Download crictl binary
+      get_url: 
+        url: "{{CRICTL_BINARY_URL}}"
+        dest: /home/ubuntu/
+      when: crictl_installed.stat.exists != true
+
+    - name: Extract crictl binary
+      unarchive: 
+        src: /home/ubuntu/{{CRICTL_BINARY_TAR_GZ}}
+        dest: /usr/local/bin
+        remote_src: true
+      when: crictl_installed.stat.exists != true
+      register: crictl_binary
+
+    - name: Remove crictl tarball
+      file:
+        path: /home/ubuntu/{{CRICTL_BINARY_TAR_GZ}}
+        state: absent
+      when: crictl_binary.changed
+
+    - name: Create crictl configuration file
+      copy:
+        content: |
+          runtime-endpoint: unix:///run/containerd/containerd.sock
+          image-endpoint: unix:///run/containerd/containerd.sock
+          timeout: 2
+          debug: false
+          pull-image-on-create: false
+        dest: /etc/crictl.yaml
+
+  handlers:
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start containerd service
+      systemd:
+        name: containerd
+        enabled: yes
+        state: started
+...

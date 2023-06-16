@@ -1,0 +1,10 @@
+---
+CONTAINERD_PACKAGE_URL: https://github.com/containerd/containerd/releases/download/v1.7.2/containerd-1.7.2-linux-amd64.tar.gz
+CONTAINERD_PACKAGE_TAR_GZ: containerd-1.7.2-linux-amd64.tar.gz
+CONTAINERD_SERVICE_FILE_URL: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+RUNC_BINARY_URL: https://github.com/opencontainers/runc/releases/download/v1.1.7/runc.amd64
+CNI_PLUGIN_URL: https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz
+CNI_PLUGIN_TAR_GZ: cni-plugins-linux-amd64-v1.3.0.tgz
+CRICTL_BINARY_URL: https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.27.0/crictl-v1.27.0-linux-amd64.tar.gz
+CRICTL_BINARY_TAR_GZ: crictl-v1.27.0-linux-amd64.tar.gz
+...
