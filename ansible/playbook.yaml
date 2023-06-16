@@ -7,8 +7,6 @@
   import_playbook: disable_swap_unzip.yaml
 
 - name: container run time related packages
-  vars_files:
-    - url_vars.yaml
   import_playbook: containerd_runc_cni_crictl.yaml
 
 - name: configure and load kernal modules

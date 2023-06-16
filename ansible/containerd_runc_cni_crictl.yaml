@@ -2,7 +2,7 @@
 - hosts: K8S_Servers
   become: true
   vars_files:
-    - ansible/url_vars.yml
+    - url_vars.yaml
   tasks:
     - name: Download containerd tarball
       shell: |
