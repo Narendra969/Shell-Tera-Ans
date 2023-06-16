@@ -10,5 +10,5 @@ resource "aws_key_pair" "key_pair" {
 
 resource "local_file" "private_key" {
   content  = tls_private_key.rsa_4096.private_key_pem
-  filename = "../ansible/${var.key_name}"
+  filename = "/home/ubuntu/.ssh/${var.key_name}"
 }
