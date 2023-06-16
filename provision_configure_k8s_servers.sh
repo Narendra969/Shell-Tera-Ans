@@ -18,6 +18,7 @@ if [ $? -eq 0 ]; then
     echo "****************************************************************************************"
     echo "provisioning kubernetes servers successfully completed"
     echo "****************************************************************************************"
+    sleep 20s
     echo "configuring kubernetes servers using ansible"
     echo "****************************************************************************************"
     ansible-playbook -i ansible/aws_ec2.yaml ansible/playbook.yaml  -u ubuntu --private-key=/home/ubuntu/.ssh/tera-ans.pem --ssh-common-args='-o StrictHostKeyChecking=no'
