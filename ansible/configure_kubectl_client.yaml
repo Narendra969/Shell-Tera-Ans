@@ -16,6 +16,12 @@
 - hosts: Kubectl_Client
   become: true
   tasks:
+   - name: Set Host Name for Kubectl_Client machine
+      shell: hostnamectl set-hostname Kubectl_Client >> /home/ubuntu/sethostname.txt
+      args: 
+        chdir: /home/ubuntu
+        creates: sethostname.txt  
+
     - name: Update apt cache and install dependencies
       apt:
         name: 
