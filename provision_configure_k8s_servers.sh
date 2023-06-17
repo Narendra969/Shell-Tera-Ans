@@ -9,7 +9,7 @@ if [[ -z $AWS_ACCESS_KEY_ID || -z $AWS_SECRET_ACCESS_KEY ]]; then
     printf "\n"
     export AWS_ACCESS_KEY_ID="$access_key_id"
     export AWS_SECRET_ACCESS_KEY="$secret_key_id"
-    echo "***********************************************************************************************************"
+    echo "********************************************************************************************************************"
     echo "Successfully Authenticated to AWS"
     echo "********************************************************************************************************************"
 else
@@ -30,7 +30,7 @@ case $action in
         if [ $? -eq 0 ]; then
             echo "***************************************************************************************************************"
             echo "Provisioning Kubernetes servers completed successfully"
-            echo "*******************************wait 20 seconds for the Kubernetes servers to be up*************************"
+            echo "*******************************wait 20 seconds for the Kubernetes servers to be up*****************************"
             sleep 20s
             echo "***************************************************************************************************************"
             echo "Configuring Kubernetes servers using Ansible"
